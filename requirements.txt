@@ -1,0 +1,13 @@
+streamlit
+google-generativeai
+langchain
+langchain-community
+faiss-cpu
+sentence-transformers
+SpeechRecognition
+pydub
+audiorecorder
+gtts
+pdfplumber
+pillow
+fpdf
