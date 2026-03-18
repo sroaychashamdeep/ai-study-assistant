@@ -1,0 +1,21 @@
+{
+  "user_preferences": {
+    "learning_style": "visual",
+    "difficulty_level": "beginner",
+    "preferred_language": "english"
+  },
+  "important_topics": [
+    "machine learning",
+    "streamlit",
+    "ai projects"
+  ],
+  "recent_topics": [
+    "rag system",
+    "faiss",
+    "gemini api"
+  ],
+  "goals": [
+    "build ai study assistant",
+    "create youtube automation channel"
+  ]
+}

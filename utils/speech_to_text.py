@@ -3,18 +3,29 @@ from pydub import AudioSegment
 import tempfile
 
 
-def speech_to_text(audio):
+def speech_to_text(audio_bytes):
 
     recognizer = sr.Recognizer()
 
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as temp_audio:
-        audio.export(temp_audio.name, format="wav")
+    # save webm audio
+    webm_file = tempfile.NamedTemporaryFile(delete=False, suffix=".webm")
+    webm_file.write(audio_bytes)
+    webm_file.close()
 
-        with sr.AudioFile(temp_audio.name) as source:
-            audio_data = recognizer.record(source)
+    # convert webm → wav
+    sound = AudioSegment.from_file(webm_file.name, format="webm")
 
-            try:
-                text = recognizer.recognize_google(audio_data)
-                return text
-            except:
-                return "Could not understand audio"
+    wav_file = tempfile.NamedTemporaryFile(delete=False, suffix=".wav")
+    sound.export(wav_file.name, format="wav")
+
+    # speech recognition
+    with sr.AudioFile(wav_file.name) as source:
+
+        audio = recognizer.record(source)
+
+    try:
+        text = recognizer.recognize_google(audio)
+        return text
+
+    except:
+        return "❌ Could not understand audio"

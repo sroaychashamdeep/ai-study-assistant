@@ -1,0 +1,17 @@
+{
+  "topics": {
+    "machine learning": {
+      "progress": 70,
+      "completed": true,
+      "last_studied": "2026-03-17"
+    },
+    "python": {
+      "progress": 50,
+      "completed": false,
+      "last_studied": "2026-03-18"
+    }
+  },
+  "quizzes_taken": 15,
+  "average_score": 78,
+  "flashcards_reviewed": 120
+}

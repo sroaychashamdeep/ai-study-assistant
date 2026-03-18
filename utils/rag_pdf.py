@@ -31,3 +31,4 @@ def search_pdf(vector_db, question):
         context += doc.page_content
 
     return context
+

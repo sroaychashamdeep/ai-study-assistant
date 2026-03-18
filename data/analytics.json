@@ -1,0 +1,15 @@
+{
+  "total_chats": 120,
+  "total_queries": 340,
+  "study_sessions": 25,
+  "voice_usage_count": 18,
+  "pdf_uploads": 10,
+  "avg_response_time": 1.8,
+  "tokens_used": 45000,
+  "favorite_topics": {
+    "machine learning": 40,
+    "python": 25,
+    "data science": 15
+  },
+  "last_active": "2026-03-18"
+}

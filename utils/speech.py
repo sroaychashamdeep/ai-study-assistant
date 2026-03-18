@@ -1,9 +1,13 @@
 from gtts import gTTS
+import tempfile
+
 
 def speak(text):
 
     tts = gTTS(text)
 
-    tts.save("response.mp3")
+    temp = tempfile.NamedTemporaryFile(delete=False, suffix=".mp3")
 
-    return "response.mp3"
+    tts.save(temp.name)
+
+    return temp.name
