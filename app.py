@@ -1,9 +1,8 @@
 import streamlit as st
-from google import genai
 
 from utils.auth import login
 from utils.streak import update_streak
-from utils.ai_service import ask_ai
+from utils.ai_service import ask_ai   # ✅ use centralized AI
 
 
 # ---------------- PAGE CONFIG ----------------
@@ -18,64 +17,28 @@ st.set_page_config(
 # ---------------- LOGIN SYSTEM ----------------
 
 if "user" not in st.session_state:
-
     login()
-
     st.stop()
-
-
-# ---------------- GEMINI CLIENT ----------------
-
-client = genai.Client(
-    api_key=st.secrets["GEMINI_API_KEY"]
-)
-
-MODEL = "gemini-3.1-flash-lite-preview"
-
-
-# ---------------- GLOBAL AI FUNCTION ----------------
-
-def ask_gemini(prompt):
-
-    try:
-
-        response = client.models.generate_content(
-            model=MODEL,
-            contents=prompt,
-            config={
-                "temperature":0.7,
-                "max_output_tokens":400
-            }
-        )
-
-        return response.text
-
-    except:
-
-        return "⚠ Gemini API quota reached. Please try again later."
 
 
 # ---------------- HEADER ----------------
 
-col1, col2 = st.columns([8,2])
+col1, col2 = st.columns([8, 2])
 
 with col1:
-
     st.title("🤖 AI Study Assistant")
 
 with col2:
-
     st.write("👤", st.session_state.user)
 
     if st.button("Logout"):
-
         del st.session_state["user"]
-
         st.rerun()
 
 
-st.markdown(
-"""
+# ---------------- DESCRIPTION ----------------
+
+st.markdown("""
 Welcome to your **AI Learning Platform**.
 
 Use the **sidebar to open tools** like:
@@ -86,8 +49,7 @@ Use the **sidebar to open tools** like:
 - 🎤 Voice Assistant  
 - 📚 Study Agent  
 - 📊 Learning Dashboard  
-"""
-)
+""")
 
 
 # ---------------- STUDY STREAK ----------------
@@ -95,27 +57,22 @@ Use the **sidebar to open tools** like:
 streak = update_streak(st.session_state.user)
 
 st.sidebar.markdown("### 🔥 Study Streak")
-
 st.sidebar.write(f"**{streak} days**")
 
 
-# ---------------- NAVIGATION INFO ----------------
+# ---------------- NAVIGATION ----------------
 
 st.sidebar.markdown("---")
 
-st.sidebar.markdown(
-"""
+st.sidebar.markdown("""
 ### 📚 Available Tools
-
-Use the pages menu to open:
 
 💬 Chat  
 📄 PDF Assistant  
 🧠 AI Tools  
 🤖 Study Agent  
 📊 Dashboard  
-"""
-)
+""")
 
 
 # ---------------- SYSTEM STATUS ----------------
@@ -123,76 +80,62 @@ Use the pages menu to open:
 st.sidebar.markdown("---")
 
 st.sidebar.markdown("### ⚙ System")
+st.sidebar.write("AI Model:", "gemini-3.1-flash-lite-preview")
 
-st.sidebar.write("AI Model:", MODEL)
 
-
-# ---------------- HOME PAGE CONTENT ----------------
+# ---------------- HOME PAGE ----------------
 
 st.markdown("---")
-
 st.subheader("🚀 What You Can Do")
 
 col1, col2 = st.columns(2)
 
 with col1:
-
-    st.markdown(
-    """
+    st.markdown("""
     ### 📚 Study Tools
-
     - Ask AI questions  
     - Generate quizzes  
     - Create flashcards  
     - Build study plans  
     - Summarize documents  
-    """
-    )
-
+    """)
 
 with col2:
-
-    st.markdown(
-    """
+    st.markdown("""
     ### 🤖 AI Features
-
     - Chat with AI tutor  
     - Upload PDFs for answers  
-    - Solve questions from images  
     - Voice learning assistant  
     - Autonomous study agent  
-    """
-    )
+    """)
 
 
 # ---------------- QUICK AI TEST ----------------
 
 st.markdown("---")
-
 st.subheader("⚡ Quick AI Test")
 
 question = st.text_input("Ask something quickly")
 
 if st.button("Ask AI"):
+    if question.strip() == "":
+        st.warning("Please enter a question")
+    else:
+        with st.spinner("AI thinking..."):
+            response = ask_ai(question)
 
-    with st.spinner("AI thinking..."):
-
-        response = ask_gemini(question)
-
-    st.write(response)
+        st.write(response)
 
 
 # ---------------- FOOTER ----------------
 
 st.markdown("---")
 
-st.markdown(
-"""
+st.markdown("""
 Built with ❤️ using:
 
 - **Streamlit**
 - **Google Gemini AI**
 - **LangChain**
 - **FAISS Vector Search**
-"""
-)
+""")

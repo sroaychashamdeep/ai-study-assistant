@@ -1,29 +1,31 @@
-from utils.ai_service import generate_response
+from utils.ai_service import ask_ai
+
 
 def grade_answer(question, user_answer):
 
+    if not question.strip() or not user_answer.strip():
+        return "⚠ Please enter both question and answer."
+
     prompt = f"""
-    You are an AI exam evaluator.
+You are an AI exam evaluator.
 
-    Question:
-    {question}
+Question:
+{question}
 
-    Student Answer:
-    {user_answer}
+Student Answer:
+{user_answer}
 
-    Evaluate based on:
-    - Accuracy
-    - Completeness
-    - Clarity
+Evaluate based on:
+- Accuracy
+- Completeness
+- Clarity
 
-    Return in this format:
+Return:
+Score (out of 10)
+Feedback
+Strengths
+Weaknesses
+Improvements
+"""
 
-    Score: (out of 10)
-    Feedback:
-    Strengths:
-    Weaknesses:
-    Improvements:
-    """
-
-    result = generate_response(prompt)
-    return result
+    return ask_ai(prompt)
