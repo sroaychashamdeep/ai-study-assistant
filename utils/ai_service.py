@@ -1,22 +1,24 @@
 from google import genai
-import streamlit as st
+import os
 
-client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
-MODEL = "gemini-3.1-flash-lite-preview"
+# ✅ REQUIRED FUNCTION (THIS WAS MISSING)
+def generate_response(prompt):
+    response = client.models.generate_content(
+        model="gemini-2.0-flash",
+        contents=prompt
+    )
+    return response.text
 
 
-def ask_ai(prompt):
+# ✅ STREAMING
+def stream_response(prompt):
+    response = client.models.generate_content_stream(
+        model="gemini-2.0-flash",
+        contents=prompt
+    )
 
-    try:
-
-        response = client.models.generate_content(
-            model=MODEL,
-            contents=prompt
-        )
-
-        return response.text
-
-    except:
-
-        return "⚠ AI service unavailable"
+    for chunk in response:
+        if chunk.text:
+            yield chunk.text

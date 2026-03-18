@@ -1,4 +1,6 @@
 import streamlit as st
+
+st.warning("🎤 Voice feature not supported in cloud deployment")
 from streamlit_mic_recorder import mic_recorder
 
 from utils.speech_to_text import speech_to_text
