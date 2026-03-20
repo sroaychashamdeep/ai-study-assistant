@@ -1,4 +1,6 @@
 import streamlit as st
+import sys
+sys.modules.pop("utils.ai_service", None)
 
 from utils.auth import login
 from utils.streak import update_streak
