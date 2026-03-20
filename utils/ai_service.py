@@ -3,24 +3,18 @@ import os
 
 # ---------------- CONFIG ----------------
 
-# Load API key from Streamlit secrets or environment
 API_KEY = os.getenv("GEMINI_API_KEY")
 
-# Initialize Gemini client
 client = genai.Client(api_key=API_KEY)
 
 # Use latest model (fallback if needed)
 MODEL = "gemini-3.1-flash-lite-preview"
-# MODEL = "gemini-2.0-flash"   # ← use this if 3.1 fails
+# MODEL = "gemini-2.0-flash"   # ← use if preview fails
 
 
-# ---------------- MAIN RESPONSE ----------------
+# ---------------- NORMAL RESPONSE ----------------
 
 def generate_response(prompt):
-    """
-    Generate a normal AI response
-    Used in: Study Agent, Exam Grader, Course Builder
-    """
     try:
         response = client.models.generate_content(
             model=MODEL,
@@ -30,9 +24,7 @@ def generate_response(prompt):
                 "max_output_tokens": 500
             }
         )
-
         return response.text if response.text else "⚠ No response generated."
-
     except Exception as e:
         return f"❌ Error: {str(e)}"
 
@@ -40,9 +32,6 @@ def generate_response(prompt):
 # ---------------- STREAMING RESPONSE ----------------
 
 def stream_response(prompt):
-    """
-    Stream response (Chat page)
-    """
     try:
         response = client.models.generate_content_stream(
             model=MODEL,
@@ -60,18 +49,12 @@ def stream_response(prompt):
 # ---------------- UNIVERSAL FUNCTION ----------------
 
 def ask_ai(prompt):
-    """
-    Universal AI function (used across app)
-    """
     return generate_response(prompt)
 
 
-# ---------------- OPTIONAL: SMART RESPONSE (ADVANCED) ----------------
+# ---------------- CONTEXT-AWARE (RAG / MEMORY) ----------------
 
 def ask_ai_with_context(prompt, context=""):
-    """
-    Use context-aware AI (for memory / RAG)
-    """
     full_prompt = f"""
 Context:
 {context}
@@ -80,3 +63,26 @@ User:
 {prompt}
 """
     return generate_response(full_prompt)
+
+
+# ---------------- IMAGE ANALYSIS (VISION AI) ----------------
+
+def analyze_image(image_bytes):
+    try:
+        response = client.models.generate_content(
+            model=MODEL,
+            contents=[
+                {"text": "Analyze this image in detail."},
+                {
+                    "inline_data": {
+                        "mime_type": "image/png",
+                        "data": image_bytes
+                    }
+                }
+            ]
+        )
+
+        return response.text if response.text else "⚠ No output from image analysis."
+
+    except Exception as e:
+        return f"❌ Image Error: {str(e)}"
