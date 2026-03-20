@@ -29,14 +29,18 @@ if uploaded_file:
     st.subheader("🧠 Processed Image")
     st.image(gray, use_column_width=True)
 
-    # ---------------- ANALYZE BUTTON ----------------
+    # ---------------- ANALYZE ----------------
 
     if st.button("Analyze Image"):
 
         with st.spinner("Analyzing..."):
 
+            uploaded_file.seek(0)   # 🔥 IMPORTANT FIX
             image_bytes = uploaded_file.read()
-            response = analyze_image(image_bytes)
+
+            mime_type = uploaded_file.type
+
+            response = analyze_image(image_bytes, mime_type)
 
         st.subheader("🤖 AI Output")
         st.write(response)

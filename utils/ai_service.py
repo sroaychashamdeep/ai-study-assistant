@@ -1,15 +1,14 @@
 from google import genai
 import os
+import base64
 
 # ---------------- CONFIG ----------------
 
 API_KEY = os.getenv("GEMINI_API_KEY")
-
 client = genai.Client(api_key=API_KEY)
 
-# Use latest model (fallback if needed)
 MODEL = "gemini-3.1-flash-lite-preview"
-# MODEL = "gemini-2.0-flash"   # ← use if preview fails
+# MODEL = "gemini-2.0-flash"   # fallback if needed
 
 
 # ---------------- NORMAL RESPONSE ----------------
@@ -52,37 +51,30 @@ def ask_ai(prompt):
     return generate_response(prompt)
 
 
-# ---------------- CONTEXT-AWARE (RAG / MEMORY) ----------------
+# ---------------- IMAGE ANALYSIS (FIXED) ----------------
 
-def ask_ai_with_context(prompt, context=""):
-    full_prompt = f"""
-Context:
-{context}
-
-User:
-{prompt}
-"""
-    return generate_response(full_prompt)
-
-
-# ---------------- IMAGE ANALYSIS (VISION AI) ----------------
-
-def analyze_image(image_bytes):
+def analyze_image(image_bytes, mime_type="image/jpeg"):
     try:
+        encoded_image = base64.b64encode(image_bytes).decode("utf-8")
+
         response = client.models.generate_content(
             model=MODEL,
             contents=[
-                {"text": "Analyze this image in detail."},
                 {
-                    "inline_data": {
-                        "mime_type": "image/png",
-                        "data": image_bytes
-                    }
+                    "parts": [
+                        {"text": "Analyze this image in detail."},
+                        {
+                            "inline_data": {
+                                "mime_type": mime_type,
+                                "data": encoded_image
+                            }
+                        }
+                    ]
                 }
             ]
         )
 
-        return response.text if response.text else "⚠ No output from image analysis."
+        return response.text if response.text else "⚠ No output from image."
 
     except Exception as e:
         return f"❌ Image Error: {str(e)}"
